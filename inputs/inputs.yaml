@@ -1,0 +1,20 @@
+# For a description of each parameter and their units of measurement, please check the README.md.
+
+Decision variables:
+    x1: {'LBound':0, 'UBound':100, 'Type': 'float'}
+    x2: {'LBound':-10, 'UBound':50, 'Type': 'float'}
+
+Main parameters:
+    opt_type: min
+    seed: 10
+    model_function: model_polynomial
+    synchronous: True
+    swarm_size: 100
+    max_iterations: 10
+    enforce_bounds: True
+    enforce_bounds_function: reset_to_bounds
+    inertia_weight: 0.6
+    acceleration_constant_local: 1.7
+    acceleration_constant_global: 1.7
+    output_template: output_template.xlsx
+    write_to_console: True
