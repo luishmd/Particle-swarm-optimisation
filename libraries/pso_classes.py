@@ -13,7 +13,7 @@ __email__ = "luis.hmd@gmail.com"
 import random as rand
 import copy
 import models
-import pse_operators as op
+import pso_bound_functions as pso_bound
 import datetime
 import lib_directory_ops
 import lib_path_ops
@@ -26,7 +26,7 @@ import lib_excel_ops_openpyxl as lib_excel
 #----------------------------------------------------------------------------------------
 class Particle(object):
     """ Creates a particle class to be used in a swarm """
-    def __init__(self, p_id, position, velocity, opt_type):
+    def __init__(self, p_id, position, velocity):
         self.id = p_id
         self.position = position
         self.velocity = velocity
@@ -54,6 +54,9 @@ class Particle(object):
 
     def get_particle_best_position(self):
         return self.particle_best_position
+
+    def get_swarm_best_position(self):
+        return self.swarm_best_position
 
     def update_fitness(self, new_fitness):
         self.fitness = new_fitness
@@ -114,14 +117,22 @@ class Search_space(object):
 
 class Swarm(object):
     """ Creates a swarm, which is a collection of particles with extra functionality """
-    def __init__(self, search_space, seed=None):
+    def __init__(self, search_space, bound_function, opt_type, seed=None):
         self.size = 0
         self.particle_list = []
         self.N_failed_evals = 0
         self.seed = seed
         self.search_space = search_space
+        self.bound_function = bound_function
+        self.opt_type = opt_type
         self.best_particle_so_far = None
         self.best_particle_current = None
+        if self.opt_type == 'min':
+            self.best_fitness_so_far =  float('+inf')
+            self.best_fitness_current = float('+inf')
+        else:
+            self.best_fitness_so_far =  float('-inf')
+            self.best_fitness_current = float('-inf')
 
     def __str__(self):
         s = "Size: {}\nSeed: {}\n".format(self.size, self.seed)
@@ -156,8 +167,8 @@ class Swarm(object):
     def initialise(self, swarm_size):
         rand.seed(a=self.seed)
         vars_names = self.search_space.get_variables_names()
-        # Initialise position
         for i in range(swarm_size):
+            # Initialise position
             position = {}
             for v in vars_names:
                 var_type = self.search_space.get_variable_type(v)
@@ -173,15 +184,31 @@ class Swarm(object):
                 else:
                     print("Could not determine type for variable {}".format(v))
                     position[v] = None
-            self.insert_particle(position)
 
-        # Initialise velocity
-        # vi ~ U(-|bup-blo|, |bup-blo|)
-
-
-
-
+            # Initialise velocity
+            velocity = {}
+            for v in vars_names:
+                var_type = self.search_space.get_variable_type(v)
+                if var_type == 'int' or var_type == 'float':
+                    lb = self.search_space.get_variable_lbound(v)
+                    ub = self.search_space.get_variable_ubound(v)
+                    velocity[v] = -abs(ub-lb) + 2*abs(ub-lb)*rand.random()
+                elif var_type == 'enumerate':
+                    values = self.search_space.get_variable_values(v)
+                    velocity[v] = -(len(values)-1) + 2*(len(values)-1)*rand.random()
+                elif var_type == 'binary':
+                    velocity[v] = -1 + 2*rand.randint(2)
+                else:
+                    print("Could not determine type for variable {}".format(v))
+                    velocity[v] = None
+            self.insert_particle(position, velocity)
         return 0
+
+    def update_position(self):
+        pass
+
+    def update_velocity(self):
+        pass
 
     def sorted_by_particle_fitness(self, reverse=False):
         particle_list_sorted = []
@@ -194,29 +221,51 @@ class Swarm(object):
             particle_list_sorted.append(self.particle_list[t[0]])
         return particle_list_sorted
 
-    def insert_particle(self, particle):
-        position = self.__enforce_solution_bounds(particle)
-        p = Particle(self.size+1, position)
+    def insert_particle(self, position, velocity):
+        pos = eval(self.bound_function)(position)
+        p = Particle(self.size+1, pos, velocity)
         self.particle_list.append(p)
         self.size += 1
         return 0
 
-    def evaluate(self, f_model):
+    def evaluate(self, f_model, synchronous=True):
         self.N_failed_evals = 0
         # Get fitness for all particles
         for i in range(len(self.particle_list)):
-            if self.particle_list[i].get_fitness() == None:
-                fitness = eval(f_model)(self.particle_list[i].get_solution())
-                if fitness:
-                    self.particle_list[i].update_fitness(fitness)
-                else:
-                    self.N_failed_evals += 1
-        # Update swarm best position
-        # consider synchronous or not
+            old_fitness = self.particle_list[i].get_fitness()
+            fitness = eval(f_model)(self.particle_list[i].get_position())
+            if fitness:
+                # Update particle fitness
+                self.particle_list[i].update_fitness(fitness)
+                # Update particle and swarm best positions
+            if self.opt_type == 'min':
+                if old_fitness and fitness and (fitness < old_fitness):
+                    new_position = self.particle_list[i].get_position()
+                    self.particle_list[i].update_particle_best_position(new_position)
+                    if fitness < self.best_fitness_current:
+                        self.particle_list[i].update_swarm_best_position(new_position)
+                        self.best_particle_current = self.particle_list[i]
+                        self.best_fitness_current = fitness
+                    if fitness < self.best_fitness_so_far:
+                        self.best_particle_so_far = self.particle_list[i]
+                        self.best_fitness_so_far = fitness
+            if self.opt_type == 'max':
+                if old_fitness and fitness and (fitness > old_fitness):
+                    new_position = self.particle_list[i].get_position()
+                    self.particle_list[i].update_particle_best_position(new_position)
+                    if fitness > self.best_fitness_current:
+                        self.particle_list[i].update_swarm_best_position(new_position)
+                        self.best_particle_current = self.particle_list[i]
+                        self.best_fitness_current = fitness
+                    if fitness > self.best_fitness_so_far:
+                        self.best_particle_so_far = self.particle_list[i]
+                        self.best_fitness_so_far = fitness
+            else:
+                self.particle_list[i].update_best
 
-
-
-        return self.N_failed_evals
+            else:
+                self.N_failed_evals += 1
+        return [self.N_evals, self.N_failed_evals]
 
 
 class pso(object):
