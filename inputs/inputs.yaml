@@ -6,15 +6,17 @@ Decision variables:
 
 Main parameters:
     opt_type: min
-    seed: 50000
+    seed: 200
     model_function: model_polynomial
     synchronous: True
     swarm_size: 100
-    max_iterations: 20
+    max_iterations: 10
     enforce_bounds: True
     enforce_bounds_function: reset_to_bounds
     inertia_weight: 0.6
     acceleration_constant_local: 1.7
     acceleration_constant_global: 1.7
+    output_template: output_template.xlsx
+    write_to_console: True
     output_template: output_template.xlsx
     write_to_console: True

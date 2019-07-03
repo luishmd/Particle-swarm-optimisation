@@ -385,9 +385,9 @@ class pso(object):
         col_i = 2
         for v in self.search_space.get_variables_names():
             ws.cell(row=5, column=col_i, value=v)
-            ws.cell(row=6, column=col_i, value=self.best_ind.get_solution()[v])
+            ws.cell(row=6, column=col_i, value=self.best_particle.get_position()[v])
             if self.params['write_to_console']:
-                s = '{}: {}'.format(v, self.best_ind.get_solution()[v])
+                s = '{}: {}'.format(v, self.best_particle.get_position()[v])
                 print(s)
             col_i += 1
         return 0
@@ -404,17 +404,17 @@ class pso(object):
             col_i += 1
         # Write generation info
         row_i = self.write['generation row index']
-        ws.cell(row=row_i, column=1, value=self.N_gen)
-        ws.cell(row=row_i, column=2, value=self.best_ind.get_fitness())
+        ws.cell(row=row_i, column=1, value=self.N_iter)
+        ws.cell(row=row_i, column=2, value=self.best_particle.get_fitness())
         col_i = 3
         for v in self.search_space.get_variables_names():
-            ws.cell(row=row_i, column=col_i, value=self.best_ind.get_solution()[v])
+            ws.cell(row=row_i, column=col_i, value=self.best_particle.get_position()[v])
             col_i += 1
         self.write['generation row index'] += 1
 
         # Write to console
         if self.params['write_to_console']:
-            s = "\t{}\t{}".format(self.N_gen, self.best_ind.get_fitness())
+            s = "\t{}\t{}".format(self.N_iter, self.best_particle.get_fitness())
             print(s)
         return 0
 
@@ -456,14 +456,14 @@ class pso(object):
         self.statistics['N_failed_evals'] = N_failed_evals
 
         # Create output directory and files
-#        self.__create_output_dir()
-#        self.wb = lib_excel.open_workbook(self.params['Excel output file'])
+        self.__create_output_dir()
+        self.wb = lib_excel.open_workbook(self.params['Excel output file'])
 
         # Write initial results
-#        if self.params['write_to_console']:
-#            print("\nIter.\tFitness")
-#        self.__write_parameters()
-#        self.__write_iteration()
+        if self.params['write_to_console']:
+            print("\nIter.\tFitness")
+        self.__write_parameters()
+        self.__write_iteration()
 
         # Determine next generation
         while self.N_iter < self.max_iter:
@@ -479,22 +479,21 @@ class pso(object):
 
             # Increment generation
             self.N_iter += 1
-            print(self.best_particle.get_fitness())
 
             # Statistics
             self.statistics['N_evals'] += N_evals
             self.statistics['N_failed_evals'] += N_failed_evals
 
             # Write results
-#            self.__write_iteration()
+            self.__write_iteration()
 
         # Write optimal results and statistics
-#        self.__write_optimal_point()
-#        self.__write_statistics()
+        self.__write_optimal_point()
+        self.__write_statistics()
 
         # Close necessary files
-#        lib_excel.save_workbook(self.wb, self.params['Excel output file'])
-#        self.wb.close()
+        lib_excel.save_workbook(self.wb, self.params['Excel output file'])
+        self.wb.close()
 
         return self.best_particle
 

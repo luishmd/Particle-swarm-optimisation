@@ -42,7 +42,13 @@ def get_parameters(root_dir):
         search_space_dic = cfg['Decision variables']
         main_params_dic = cfg['Main parameters']
 
+        additional_params_dic = {
+            "Excel output dir": lib_path_ops.join_paths(root_dir, 'outputs/'),
+            "Excel template file": lib_path_ops.join_paths(root_dir, lib_path_ops.join_paths('outputs/', main_params_dic['output_template'])),
+        }
+
         params_dic = main_params_dic
+        params_dic.update(additional_params_dic)
 
         print("Loaded inputs successfully.")
         return search_space_dic, params_dic
