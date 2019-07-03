@@ -53,10 +53,10 @@ class Particle(object):
         return self.fitness
 
     def get_particle_best_position(self):
-        return self.particle_best_position
+        return self.particle_best_position.copy()
 
     def get_swarm_best_position(self):
-        return self.swarm_best_position
+        return self.swarm_best_position.copy()
 
     def update_fitness(self, new_fitness):
         self.fitness = new_fitness
@@ -304,14 +304,14 @@ class Swarm(object):
                 best_swarm_particle = self.sorted_by_particle_fitness(reverse=reverse)[0]
                 best_swarm_position = best_swarm_particle.get_position()
                 # Update best particles
-                self.best_particle_current = best_swarm_particle
+                self.best_particle_current = best_swarm_particle.copy()
                 if self.best_particle_so_far:
                     if opt_type == 'min' and fitness < self.best_particle_so_far.get_fitness():
-                        self.best_particle_so_far = best_swarm_particle
+                        self.best_particle_so_far = best_swarm_particle.copy()
                     if opt_type == 'max' and fitness > self.best_particle_so_far.get_fitness():
-                        self.best_particle_so_far = best_swarm_particle
+                        self.best_particle_so_far = best_swarm_particle.copy()
                 else:
-                    self.best_particle_so_far = best_swarm_particle
+                    self.best_particle_so_far = best_swarm_particle.copy()
                 # Update all particles
                 for i in range(len(self.particle_list)):
                     self.particle_list[i].update_swarm_best_position(best_swarm_position)
