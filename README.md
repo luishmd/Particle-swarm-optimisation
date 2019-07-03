@@ -8,12 +8,12 @@ A particle swarm optimisation algorithm is a stochastic optimisation technique t
 The current library has the following features:
 1. Ability to easily specify a search space from a text file
 2. Ability to easily specify parameters via a text file
-3. Different operators for selection, crossover and mutation and ability to extend them
-4. Can write the results to an excel file, including statistics and the set of parameters used, without overwritting previous executions
+3. Different functions for bounds violation handling and ability easily switch between them
+4. Can write the results to an excel file, including statistics and the set of parameters used, without overwriting previous executions
 
 
 ## Output
-Excel file with optimal point and evolution of population fitness with generations. The excel file where results are stored is copied from a defined template (set in inputs.yaml), to a subdirectory in 'outputs/'. The current date_time is used to generate the name of the subdirectory and output file. This prevents accidental overwriting.
+Excel file with optimal point and evolution of swarm fitness with iterations. The excel file where results are stored is copied from a defined template (set in inputs.yaml), to a subdirectory in 'outputs/'. The current date_time is used to generate the name of the subdirectory and output file. This prevents accidental overwriting.
 
 ## Input data ( See file 'inputs.yaml')
 1. Search space
@@ -24,43 +24,20 @@ Excel file with optimal point and evolution of population fitness with generatio
     - *opt_type*: type of optimisation -- Possible values: min / max --
     - *seed*: seed number to use when generating random numbers -- Possible values: int / None --
     - *model_function*: name of function to be optimised -- Possible values: str --
-    - *population_size*: size of the population -- Possible values: positive int --
-    - *max_generations*: maximum number of generations to be executed -- Possible values: positive int --
-    - *elitism_params*: Elitism. Maps to parameters below.
-    - *selection_params: Selection. Maps to parameters below.
-    - *crossover_params: Crossover. Maps to parameters below.
-    - *mutation_params: Mutation. Maps to parameters below.
+    - *swarm_size*: size of the swarm -- Possible values: positive int --
+    - *max_iterations*: maximum number of iterations to be executed -- Possible values: positive int --
+    - *synchronous*: 
+    - *enforce_bounds*: 
+    - *enforce_bounds_function*: 
+    - *inertia_weight*:
+    - *acceleration_constant_local*: 
+    - *acceleration_constant_global*:  
     - *output_template*: name of the excel template for results -- Possible values: str --
     - *write_to_console*: determines whether results are written to the console or not -- Possible values: True / False --
 
+# Bound functions implemented
 
-3. Elitism
-    - *use_elitism*: decides whether elitism is used or not -- Possible values: True / False --
-    - *elitism_function*: name of elitism function used -- Possible values: str --
-    - *n_ind_elitism*: number of individuals maintained from one generation to the next -- Possible values: positive int --
-
-4. Selection
-    - *selection_function*: name of selection function used -- Possible values: str --
-    - *n_ind_tournament*: number of individuals in tournament -- Possible values: int --
-    - *mating_pool_fraction*: determines size of mating pool (fraction of population size) -- Possible values: float in interval [0, 1] --
-
-5. Crossover
-    - *crossover_function*: name of crossover function used -- Possible values: str --
-    - *alpha*: parameter that determines new crossover offspring -- Possible values: float --
-    - *p_crossover*: probability of crossover -- Possible values: float in interval [0, 1 --
-
-6. Mutation
-    - *mutation_function*: name of mutation function used -- Possible values: str --
-    - *distribution_constant*: constant in polynomial mutation -- Possible values: float --
-    - *p_mutation*: probability of mutation -- Possible values: float in interval [0, 1] --
-
-
-# Operators implemented
-
-- Tournament selection
-- Blend-alpha crossover
-- Polynomial mutation
-- Elitism
+- *reset_to_bounds*: Simple function that resets each variable to the closest bound
 
 
 # Technologies used
@@ -85,12 +62,12 @@ This work is still in development.
 
 # Future enhancements
 1. Add sql connectivity
-2. Add more operators
+2. Add more bound functions
 3. Add more statistics (especially on operator performance)
 
 
 # How to use it
-1. Open *ga_main.py* and run it.
+1. Open *pso_main.py* and run it.
 
 
 # How to customise it to your needs
@@ -98,4 +75,4 @@ This work is still in development.
 
 2. Define a search space in the inputs file. This corresponds to the set of decision variables
 
-3. Open *ga_main.py* and run it.
+3. Open *pso_main.py* and run it.

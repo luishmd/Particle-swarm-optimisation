@@ -18,5 +18,3 @@ Main parameters:
     acceleration_constant_global: 1.7
     output_template: output_template.xlsx
     write_to_console: True
-    output_template: output_template.xlsx
-    write_to_console: True
