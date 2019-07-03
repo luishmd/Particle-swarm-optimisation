@@ -6,11 +6,11 @@ Decision variables:
 
 Main parameters:
     opt_type: min
-    seed: 10
+    seed: 50000
     model_function: model_polynomial
     synchronous: True
     swarm_size: 100
-    max_iterations: 10
+    max_iterations: 20
     enforce_bounds: True
     enforce_bounds_function: reset_to_bounds
     inertia_weight: 0.6

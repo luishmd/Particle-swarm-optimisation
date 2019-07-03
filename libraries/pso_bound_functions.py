@@ -19,7 +19,7 @@ import random as rand
 #----------------------------------------------------------------------------------------
 # BOUND FUNCTIONS
 #----------------------------------------------------------------------------------------
-def enforce_solution_bounds(search_space, position, seed=None):
+def reset_to_bounds(search_space, position, seed=None):
     rand.seed(a=seed)
     position_bounded = {}
     vars_names = search_space.get_variables_names()
