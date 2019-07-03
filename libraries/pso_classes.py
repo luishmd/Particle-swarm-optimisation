@@ -97,12 +97,18 @@ class Search_space(object):
             return None
 
     def get_variable_lbound(self, var):
+        """
+        Function that returns the lower bound for a given variable.
+        """
         try:
             return self.search_space[var]["LBound"]
         except KeyError:
             return None
 
     def get_variable_ubound(self, var):
+        """
+        Function that returns the upper bound for a given variable.
+        """
         try:
             return self.search_space[var]["UBound"]
         except KeyError:
@@ -146,18 +152,33 @@ class Swarm(object):
         return self.search_space
 
     def get_particle(self, p_id):
+        """
+        Function that returns a single particle with a given id
+        """
         return self.particle_list[p_id]
 
     def get_particles(self):
+        """
+        Function that returns all the particles in the swarm
+        """
         return self.particle_list
 
     def get_best_particle_so_far(self):
+        """
+        Function that returns the best particle ever found by the swarm, which is not necessarly contained in the swarm at any given iteration.
+        """
         return self.best_particle_so_far
 
     def get_best_particle_current(self):
+        """
+        Function that returns the best particle currently in the swarm.
+        """
         return self.best_particle_current
 
     def initialise(self, swarm_size, f_bound, seed=None):
+        """
+        Function that initialises a swarm of a given size
+        """
         rand.seed(a=seed)
         vars_names = self.search_space.get_variables_names()
         for i in range(swarm_size):
@@ -198,6 +219,9 @@ class Swarm(object):
         return 0
 
     def update_position(self, f_bound, seed=None):
+        """
+        Function that updates the position based on a previous position and the current velocity.
+        """
         vars_names = self.search_space.get_variables_names()
         for i in range(self.size):
             new_position = {}
@@ -222,6 +246,9 @@ class Swarm(object):
         return 0
 
     def update_velocity(self, c_inertia, c_local, c_global, seed=None):
+        """
+        Function that updates the velocity according to the PSO rules
+        """
         rand.seed(a=seed)
         vars_names = self.search_space.get_variables_names()
         for i in range(self.size):
@@ -236,6 +263,10 @@ class Swarm(object):
         return 0
 
     def sorted_by_particle_fitness(self, reverse=False):
+        """
+        Function that sorts a swarm by fitness, depending on the optimisation type (min in ascending order).
+        return: a sorted list of particles
+        """
         particle_list_sorted = []
         tuple_list = []
         for i in range(self.size):
@@ -247,6 +278,9 @@ class Swarm(object):
         return particle_list_sorted
 
     def insert_particle(self, f_bound, position, velocity, seed=None):
+        """
+        Function that inserts a particle in the swarm, given a position and velocity.
+        """
         if f_bound:
             pos = eval(f_bound)(self.search_space, position, seed=seed)
         else:
@@ -257,6 +291,9 @@ class Swarm(object):
         return 0
 
     def evaluate(self, f_model, opt_type, synchronous=True):
+        """
+        Function that evaluates a swarm.
+        """
         self.N_failed_evals = 0
         # Get fitness for all particles
         for i in range(len(self.particle_list)):
@@ -465,7 +502,7 @@ class pso(object):
         self.__write_parameters()
         self.__write_iteration()
 
-        # Determine next generation
+        # Determine next iteration
         while self.N_iter < self.max_iter:
             # Update velocity
             swarm.update_velocity(c_inertia, c_local, c_global, seed=self.seed)
@@ -477,7 +514,7 @@ class pso(object):
             N_evals, N_failed_evals = swarm.evaluate(f_model, self.opt_type, synchronous=self.synchronous)
             self.best_particle = swarm.get_best_particle_current()
 
-            # Increment generation
+            # Increment iteration
             self.N_iter += 1
 
             # Statistics

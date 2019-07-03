@@ -10,7 +10,6 @@ __email__ = "luis.hmd@gmail.com"
 #----------------------------------------------------------------------------------------
 # IMPORTS
 #----------------------------------------------------------------------------------------
-import math
 import random as rand
 
 
@@ -20,6 +19,9 @@ import random as rand
 # BOUND FUNCTIONS
 #----------------------------------------------------------------------------------------
 def reset_to_bounds(search_space, position, seed=None):
+    """
+    Function that resets the position to the bounds if these are violated.
+    """
     rand.seed(a=seed)
     position_bounded = {}
     vars_names = search_space.get_variables_names()
