@@ -26,12 +26,12 @@ Excel file with optimal point and evolution of swarm fitness with iterations. Th
     - *model_function*: name of function to be optimised -- Possible values: str --
     - *swarm_size*: size of the swarm -- Possible values: positive int --
     - *max_iterations*: maximum number of iterations to be executed -- Possible values: positive int --
-    - *synchronous*: 
-    - *enforce_bounds*: 
-    - *enforce_bounds_function*: 
-    - *inertia_weight*:
-    - *acceleration_constant_local*: 
-    - *acceleration_constant_global*:  
+    - *synchronous*:  if true then the particle best known swarm position is updated as soon as it becomes available -- Possible values: True / False --
+    - *enforce_bounds*: if true then the bounds are enforced for every particle position using a user-defined bounds function -- Possible values: True / False --
+    - *enforce_bounds_function*: bounds function used if bounds are to be enforced  -- Possible values: str --
+    - *inertia_weight*: weight used for inertia term -- Possible values: float --
+    - *acceleration_constant_local*: weight used for the term that considers attraction to the particle's best known position -- Possible values: float -- 
+    - *acceleration_constant_global*: weight used for the term that considers attraction to the swarm's best known position -- Possible values: float --  
     - *output_template*: name of the excel template for results -- Possible values: str --
     - *write_to_console*: determines whether results are written to the console or not -- Possible values: True / False --
 
